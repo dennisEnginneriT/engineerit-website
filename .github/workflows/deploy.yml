@@ -1,0 +1,51 @@
+# Builds and deploys the React app to the gh-pages branch
+# on every push to main.
+#
+# GitHub Pages setting → Source must be set to "Deploy from a branch"
+# with branch: gh-pages, folder: / (root).
+
+name: Build & Deploy
+
+on:
+  push:
+    branches: [main]
+
+# Allow only one deployment at a time; cancel any in-flight run.
+concurrency:
+  group: gh-pages-deploy
+  cancel-in-progress: true
+
+# Write access is required to push to the gh-pages branch.
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout source ────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. Set up Node.js with dependency caching ─────────────
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # ── 3. Install dependencies (clean install for CI) ────────
+      - name: Install dependencies
+        run: npm ci
+
+      # ── 4. Type-check and build production bundle ─────────────
+      - name: Build
+        run: npm run build
+
+      # ── 5. Deploy dist/ to the gh-pages branch ────────────────
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
