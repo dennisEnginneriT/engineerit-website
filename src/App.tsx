@@ -1,4 +1,5 @@
 import { useState, useEffect, type CSSProperties } from "react";
+import { Link } from "react-router-dom";
 
 function App() {
   const launchDate = new Date("2027-01-01T00:00:00");
@@ -25,11 +26,15 @@ function App() {
 
   return (
     <div style={styles.page}>
-      <div style={styles.glow} aria-hidden />
+      <nav style={styles.nav}>
+        <span style={styles.logo}>EngineeriT</span>
+        <Link to="/clients" style={styles.navLink}>
+          Clients
+        </Link>
+      </nav>
 
       <main style={styles.main}>
-        <span style={styles.logo}>EngineeriT</span>
-        <span style={styles.badge}>COMING SOON</span>
+        <p style={styles.label}>COMING SOON</p>
 
         <h1 style={styles.heading}>
           Something great is
@@ -38,18 +43,26 @@ function App() {
         </h1>
 
         <p style={styles.sub}>
-          We're working hard behind the scenes to bring you something
-          exceptional. Stay tuned.
+          We're working behind the scenes to bring you something exceptional.
         </p>
 
+        <div style={styles.divider} />
+
         <div style={styles.timer}>
-          {(["days", "hours", "minutes", "seconds"] as const).map((unit) => (
-            <div key={unit} style={styles.timerBlock}>
-              <span style={styles.timerValue}>{pad(timeLeft[unit])}</span>
-              <span style={styles.timerLabel}>{unit}</span>
-            </div>
-          ))}
+          {(["days", "hours", "minutes", "seconds"] as const).map(
+            (unit, i) => (
+              <div key={unit} style={styles.timerBlock}>
+                <span style={styles.timerValue}>
+                  {pad(timeLeft[unit])}
+                  {i < 3 && <span style={styles.timerSep}>:</span>}
+                </span>
+                <span style={styles.timerLabel}>{unit}</span>
+              </div>
+            )
+          )}
         </div>
+
+        <div style={styles.divider} />
 
         <form
           style={styles.form}
@@ -64,13 +77,13 @@ function App() {
             name="email"
             type="email"
             required
-            placeholder="Enter your email"
+            placeholder="your@email.com"
             style={styles.input}
             onFocus={(e) =>
-              Object.assign(e.currentTarget.style, styles.inputFocus)
+              (e.currentTarget.style.borderColor = "#111")
             }
             onBlur={(e) =>
-              (e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)")
+              (e.currentTarget.style.borderColor = "#e0e0e0")
             }
           />
           <button type="submit" style={styles.button}>
@@ -80,7 +93,7 @@ function App() {
       </main>
 
       <footer style={styles.footer}>
-        &copy; {new Date().getFullYear()} EngineeriT &middot; All rights reserved
+        &copy; 2022 EngineeriT
       </footer>
     </div>
   );
@@ -89,151 +102,161 @@ function App() {
 const styles: Record<string, CSSProperties> = {
   page: {
     minHeight: "100%",
-    background: "#0f172a",
-    color: "#ffffff",
+    background: "#fff",
+    color: "#111",
     fontFamily:
       "'Century Gothic', CenturyGothic, AppleGothic, sans-serif",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
-    overflow: "hidden",
-    padding: "2rem",
+    padding: "clamp(2rem, 5vw, 4rem) clamp(1.5rem, 4vw, 3rem)",
   },
 
-  glow: {
-    position: "absolute",
-    top: "-40%",
-    left: "50%",
-    transform: "translateX(-50%)",
-    width: "min(900px, 140vw)",
-    height: "min(900px, 140vw)",
-    borderRadius: "50%",
-    background:
-      "radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%)",
-    pointerEvents: "none" as const,
-  },
-
-  main: {
-    position: "relative",
-    zIndex: 1,
+  nav: {
+    width: "100%",
+    maxWidth: 560,
     display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    textAlign: "center",
-    maxWidth: 640,
-    gap: "2rem",
+    alignItems: "baseline",
+    justifyContent: "space-between",
+    marginBottom: "clamp(4rem, 10vh, 8rem)",
   },
 
   logo: {
-    fontSize: "clamp(1.25rem, 4vw, 1.75rem)",
+    fontSize: "1.1rem",
     fontWeight: 900,
     letterSpacing: "-0.03em",
-    color: "rgb(165,180,252)",
+    color: "#111",
     fontFamily:
       "'Century Gothic Bold', 'Century Gothic', CenturyGothic, AppleGothic, sans-serif",
   },
 
-  badge: {
-    display: "inline-block",
-    fontSize: "0.7rem",
-    fontWeight: 700,
-    letterSpacing: "0.2em",
-    padding: "0.4rem 1rem",
-    borderRadius: "9999px",
-    border: "1px solid rgba(99,102,241,0.4)",
-    color: "rgb(165,180,252)",
-    background: "rgba(99,102,241,0.08)",
+  navLink: {
+    fontSize: "0.8rem",
+    fontWeight: 500,
+    color: "#999",
+    textDecoration: "none",
+    letterSpacing: "0.04em",
+  },
+
+  main: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    textAlign: "center",
+    maxWidth: 560,
+    flex: 1,
+  },
+
+  label: {
+    fontSize: "0.65rem",
+    fontWeight: 600,
+    letterSpacing: "0.25em",
+    color: "#bbb",
+    marginBottom: "1.5rem",
   },
 
   heading: {
-    fontSize: "clamp(2rem, 6vw, 3.5rem)",
-    fontWeight: 800,
-    lineHeight: 1.15,
+    fontSize: "clamp(1.8rem, 5vw, 2.8rem)",
+    fontWeight: 700,
+    lineHeight: 1.2,
     letterSpacing: "-0.02em",
+    color: "#111",
+    margin: 0,
   },
 
   sub: {
-    fontSize: "clamp(0.95rem, 2.5vw, 1.125rem)",
-    lineHeight: 1.7,
-    color: "rgba(255,255,255,0.55)",
-    maxWidth: 480,
+    fontSize: "clamp(0.9rem, 2vw, 1rem)",
+    lineHeight: 1.8,
+    color: "#999",
+    maxWidth: 400,
+    marginTop: "1.25rem",
+  },
+
+  divider: {
+    width: 40,
+    height: 1,
+    background: "#e0e0e0",
+    margin: "2.5rem 0",
   },
 
   timer: {
     display: "flex",
-    gap: "clamp(0.75rem, 3vw, 2rem)",
+    alignItems: "flex-start",
+    gap: "clamp(0.25rem, 2vw, 0.5rem)",
   },
 
   timerBlock: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    gap: "0.35rem",
-    minWidth: 60,
+    minWidth: 52,
   },
 
   timerValue: {
-    fontSize: "clamp(1.75rem, 5vw, 2.75rem)",
+    fontSize: "clamp(1.5rem, 4.5vw, 2.25rem)",
     fontWeight: 700,
     fontVariantNumeric: "tabular-nums",
     letterSpacing: "-0.02em",
+    color: "#111",
+  },
+
+  timerSep: {
+    color: "#ddd",
+    fontWeight: 300,
+    marginLeft: "clamp(0.25rem, 1.5vw, 0.5rem)",
   },
 
   timerLabel: {
-    fontSize: "0.65rem",
+    fontSize: "0.55rem",
     fontWeight: 500,
     textTransform: "uppercase",
     letterSpacing: "0.15em",
-    color: "rgba(255,255,255,0.35)",
+    color: "#ccc",
+    marginTop: "0.3rem",
   },
 
   form: {
     display: "flex",
-    gap: "0.75rem",
+    gap: "0.5rem",
     width: "100%",
-    maxWidth: 420,
+    maxWidth: 380,
     flexWrap: "wrap",
     justifyContent: "center",
   },
 
   input: {
-    flex: "1 1 220px",
-    padding: "0.75rem 1rem",
-    fontSize: "0.9rem",
-    borderRadius: "0.5rem",
-    border: "1px solid rgba(255,255,255,0.12)",
-    background: "rgba(255,255,255,0.05)",
-    color: "#fff",
+    flex: "1 1 200px",
+    padding: "0.7rem 0",
+    fontSize: "0.85rem",
+    border: "none",
+    borderBottom: "1px solid #e0e0e0",
+    background: "transparent",
+    color: "#111",
     outline: "none",
     transition: "border-color 0.2s",
-  },
-
-  inputFocus: {
-    borderColor: "rgb(99,102,241)",
+    textAlign: "center",
   },
 
   button: {
-    padding: "0.75rem 1.5rem",
-    fontSize: "0.9rem",
+    padding: "0.65rem 1.75rem",
+    fontSize: "0.75rem",
     fontWeight: 600,
-    borderRadius: "0.5rem",
-    border: "none",
-    background: "rgb(99,102,241)",
+    letterSpacing: "0.08em",
+    textTransform: "uppercase",
+    borderRadius: "0",
+    border: "1px solid #111",
+    background: "#111",
     color: "#fff",
     cursor: "pointer",
-    transition: "background 0.2s",
-    whiteSpace: "nowrap",
+    transition: "background 0.2s, color 0.2s",
   },
 
   footer: {
-    position: "relative",
-    zIndex: 1,
     marginTop: "auto",
-    paddingTop: "3rem",
-    fontSize: "0.75rem",
-    color: "rgba(255,255,255,0.25)",
+    paddingTop: "clamp(3rem, 8vh, 6rem)",
+    fontSize: "0.65rem",
+    color: "#ccc",
+    letterSpacing: "0.04em",
   },
 };
 
